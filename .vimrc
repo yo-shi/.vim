@@ -1,6 +1,5 @@
-
 "font
-if has(win32)
+if has("win32")
 	set guifont=MS_Gothic:h10
 	set viminfo+=nC:/tools/vim/_viminfo
 endif
@@ -22,7 +21,7 @@ set hlsearch
 set incsearch
 
 "grep program
-if has(win32)
+if has("win32")
 	set grepprg=grep.exe\ -nHIr\ --exclude-dir=.svn
 	let $PATH=expand($PATH) . ';C:\Program Files\GnuWin32\bin'
 endif
@@ -44,7 +43,6 @@ nnoremap tr <C-PageUp>
 nnoremap tl <C-PageDown>
 
 "
-inoremap <c-h> <Left>
 inoremap <c-j> <Down>
 inoremap <c-k> <Up>
 inoremap <c-l> <Right>

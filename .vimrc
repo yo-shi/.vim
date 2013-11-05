@@ -1,15 +1,28 @@
+augroup source-vimrc
+  autocmd!
+  autocmd BufWritePost *vimrc source $MYVIMRC
+augroup END
+
+"status line
+set laststatus=2
+set statusline&
+set statusline+=%F%m%r%h%w\%=[TYPE=%Y]\[FORMAT=%{&fileformat}]\[ENC=%{&fileencoding}]\[ROW=%l/%L]\[COLUMN=%c]
+
 "font
-if has("win32")
+if has('win32')
 	set guifont=MS_Gothic:h10
 	set viminfo+=nC:/tools/vim/_viminfo
 endif
 
 "window size
-set lines=80
-set columns=270
+"set lines=34
+"set columns=130
 winpos 0 0
-
+if has("gui_running")
+  set lines=99 columns=99
+endif 
 "option
+set number
 set smarttab
 set expandtab
 set shiftwidth=4
@@ -21,7 +34,7 @@ set hlsearch
 set incsearch
 
 "grep program
-if has("win32")
+if has('win32')
 	set grepprg=grep.exe\ -nHIr\ --exclude-dir=.svn
 	let $PATH=expand($PATH) . ';C:\Program Files\GnuWin32\bin'
 endif
@@ -58,7 +71,9 @@ inoremap {} {}<Left>
 nnoremap dt :%s/<tab>/    /g<CR>
 
 "open .vimrc
-nnoremap <space>. :tab split $MYVIMRC<CR>
+"nnoremap <space>. :tab split $MYVIMRC<CR>
+nnoremap <space>. :tab split ~/.vim/.vimrc<CR>
+nnoremap <space>, :source ~/.vim/.vimrc<CR>
 
 
 "global

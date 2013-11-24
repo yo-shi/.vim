@@ -1,3 +1,4 @@
+"編集後リロードする
 augroup source-vimrc
   autocmd!
   autocmd BufWritePost *vimrc source $MYVIMRC
@@ -19,7 +20,8 @@ endif
 "set columns=130
 winpos 0 0
 if has("gui_running")
-  set lines=99 columns=99
+  set lines=100 columns=150
+  "set lines=999 columns=999
 endif 
 "option
 set number
@@ -66,9 +68,6 @@ inoremap [] []<Left>
 inoremap "" ""<Left>
 inoremap <> <><Left>
 inoremap {} {}<Left>
-
-"delete tab
-nnoremap dt :%s/<tab>/    /g<CR>
 
 "open .vimrc
 "nnoremap <space>. :tab split $MYVIMRC<CR>

@@ -1,3 +1,57 @@
+" ----------------------------------------------------------------------------------------
+"   neobundle
+" ----------------------------------------------------------------------------------------
+set nocompatible               " Be iMproved
+
+if has('vim_starting')
+    set runtimepath+=~/.vim/bundle/neobundle.vim/
+endif
+
+call neobundle#rc(expand('~/.vim/bundle/'))
+
+" Let NeoBundle manage NeoBundle
+NeoBundleFetch 'Shougo/neobundle.vim'
+
+" Recommended to install
+" After install, turn shell ~/.vim/bundle/vimproc, (n,g)make -f your_machines_makefile
+NeoBundle 'Shougo/vimproc', {
+        \ 'build' : {
+                \ 'windows' : 'make -f make_mingw32.mak',
+                \ 'cygwin' : 'make -f make_cygwin.mak',
+                \ 'mac' : 'make -f make_mac.mak',
+                \ 'unix' : 'make -f make_unix.mak',
+        \ },
+\ }
+
+filetype plugin indent on     " Required!
+
+" Brief help
+" :NeoBundleList          - list configured bundles
+" :NeoBundleInstall(!)    - install(update) bundles
+" :NeoBundleClean(!)      - confirm(or auto-approve) removal of unused bundles
+
+" Installation check.
+NeoBundleCheck
+
+NeoBundleLazy 'vim-jp/cpp-vim', {
+            \ 'autoload' : {'filetypes' : 'cpp'}
+            \ }
+
+augroup cpp-path
+    autocmd!
+    autocmd FileType cpp setlocal path=.,/usr/include,/usr/local/include,/usr/share/qt4/mkspecs/linux-g++,/usr/include/qt4/QtCore,/usr/include/qt4/QtGui,/usr/include/qt4/QtTest,/usr/include/qt4 
+augroup END
+
+NeoBundle 'Shougo/neocomplete.vim'
+if !exists('g:neocomplete#force_omni_input_patterns')
+    let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.cpp =
+        \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'surround.vim'
+
 "編集後リロードする
 augroup source-vimrc
   autocmd!
@@ -105,7 +159,8 @@ nnoremap td :tabc<CR>
 nnoremap tr <C-PageUp>
 nnoremap tl <C-PageDown>
 
-"
+"挿入モードのカーソル移動
+inoremap <c-h> <Up>
 inoremap <c-j> <Down>
 inoremap <c-k> <Up>
 inoremap <c-l> <Right>
@@ -123,10 +178,10 @@ nnoremap <space>, :source ~/.vim/.vimrc<CR>
 
 
 "global
-map <C-g> :Gtags -g 
-map <C-i> :Gtags -f %<CR>
-map <C-j> :GtagsCursor<CR>
-map <C-n> :cn<CR>zz
-map <C-p> :cp<CR>zz
+nnoremap <C-g> :Gtags -g 
+nnoremap <C-h> :Gtags -f %<CR>
+nnoremap <C-j> :GtagsCursor<CR>
+nnoremap <C-n> :cn<CR>zz
+nnoremap <C-p> :cp<CR>zz
 
 let g:netrw_localcopycmd = ''

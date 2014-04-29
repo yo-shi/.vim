@@ -1,76 +1,89 @@
-" ----------------------------------------------------------------------------------------
-"   neobundle
-" ----------------------------------------------------------------------------------------
+if has('vim_starting')
 set nocompatible               " Be iMproved
 
-if has('vim_starting')
-    set runtimepath+=~/.vim/bundle/neobundle.vim/
+set runtimepath+=$VIM/vim74/bundle/neobundle.vim/
 endif
 
-call neobundle#rc(expand('~/.vim/bundle/'))
+" Save fold settings.
+"autocmd BufWritePost * if expand('%') != '' && &buftype !~ 'nofile' | mkview | endif
+"autocmd BufRead * if expand('%') != '' && &buftype !~ 'nofile' | silent loadview | endif
+" Don't save options.
+set viewoptions-=options
+
+"-----------------
+" plugin
+"-----------------
+" Required:
+call neobundle#rc(expand('$VIM/vim74/bundle/'))
 
 " Let NeoBundle manage NeoBundle
+" Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 
-" Recommended to install
-" After install, turn shell ~/.vim/bundle/vimproc, (n,g)make -f your_machines_makefile
-NeoBundle 'Shougo/vimproc', {
-        \ 'build' : {
-                \ 'windows' : 'make -f make_mingw32.mak',
-                \ 'cygwin' : 'make -f make_cygwin.mak',
-                \ 'mac' : 'make -f make_mac.mak',
-                \ 'unix' : 'make -f make_unix.mak',
-        \ },
-\ }
+"-----------------
+" vim-over
+"-----------------
+NeoBundle 'osyo-manga/vim-over'
+" over.vimの起動
+nnoremap <silent> <Leader>m :OverCommandLine<CR>
+" カーソル下の単語をハイライト付きで置換
+nnoremap sub :OverCommandLine<CR>%s/<C-r><C-w>//g<Left><Left>
+" コピーした文字列をハイライト付きで置換
+nnoremap subp y:OverCommandLine<CR>%s!<C-r>=substitute(@0, '!', '\\!', 'g')<CR>!!gI<Left><Left><Left>
 
-filetype plugin indent on     " Required!
+"-----------------
+" indentLine
+"-----------------
+NeoBundle 'Yggdroot/indentLine'
+let g:indentLine_color_term = 111
+let g:indentLine_color_gui = '#708090'
+let g:indentLine_char = '|' "use |, ? or │
 
-" Brief help
-" :NeoBundleList          - list configured bundles
-" :NeoBundleInstall(!)    - install(update) bundles
-" :NeoBundleClean(!)      - confirm(or auto-approve) removal of unused bundles
+"-----------------
+" unite
+"-----------------
+NeoBundle 'Shougo/unite.vim'
+NeoBundle 'Shougo/neomru.vim'
+NeoBundle 'Shougo/vimproc.vim'
+let g:unite_enable_startinsert=1
+let g:unite_source_history_yank_enable =1
+let g:unite_source_file_mru_limit = 50
+nnoremap <silent> <space>uy :<C-u>Unite history/yank<CR>
+nnoremap <silent> <space>ub :<C-u>Unite buffer<CR>
+nnoremap <silent> <space>uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+nnoremap <silent> <space>ur :<C-u>Unite -buffer-name=register register<CR>
+nnoremap <silent> <space>uu :<C-u>Unite file_mru buffer<CR>
 
-" Installation check.
+"-----------------
+" restart
+"-----------------
+NeoBundle 'tyru/restart.vim'
+let g:restart_sessionoptions
+    \ = 'blank,buffers,curdir,folds,help,localoptions,tabpages'
+
+"-----------------
+" neocomplete
+"-----------------
+NeoBundle 'Shougo/neocomplete.vim'
+
+"-----------------
+" neocomplete
+"-----------------
+NeoBundle 'tpope/vim-surround.git'
+
 NeoBundleCheck
 
-NeoBundleLazy 'vim-jp/cpp-vim', {
-            \ 'autoload' : {'filetypes' : 'cpp'}
-            \ }
-
-augroup cpp-path
-    autocmd!
-    autocmd FileType cpp setlocal path=.,/usr/include,/usr/local/include,/usr/share/qt4/mkspecs/linux-g++,/usr/include/qt4/QtCore,/usr/include/qt4/QtGui,/usr/include/qt4/QtTest,/usr/include/qt4 
-augroup END
-
-NeoBundle 'Shougo/neocomplete.vim'
-if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.cpp =
-        \ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
-
-NeoBundle 'Shougo/unite.vim'
-NeoBundle 'surround.vim'
-
-"編集後リロードする
-augroup source-vimrc
-  autocmd!
-  autocmd BufWritePost *vimrc source $MYVIMRC
-augroup END
-
-set nocompatible
-
+filetype plugin on
 " 画面表示の設定
 set number         " 行番号を表示する
 set cursorline     " カーソル行の背景色を変える
 "set cursorcolumn   " カーソル位置のカラムの背景色を変える
-set laststatus=2   " ステータス行を常に表示
 set cmdheight=1    " メッセージ表示欄を1行確保
 set showmatch      " 対応する括弧を強調表示
 set helpheight=999 " ヘルプを画面いっぱいに開く
 "set list           " 不可視文字を表示
 " 不可視文字の表示記号指定
-"set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+"set listchars=tab:?\ ,eol:?,extends:?,precedes:?
 
 " カーソル移動関連の設定
 set backspace=indent,eol,start " Backspaceキーの影響範囲に制限を設けない
@@ -117,7 +130,7 @@ set iminsert=2
 " コマンドラインモードでTABキーによるファイル名補完を有効にする
 set wildmenu wildmode=list:longest,full
 " コマンドラインの履歴を10000件保存する
-set history=10000
+set history=100
 
 " ビープの設定
 "ビープ音すべてを無効にする
@@ -130,21 +143,13 @@ set statusline&
 set statusline+=%F%m%r%h%w\%=[TYPE=%Y]\[FORMAT=%{&fileformat}]\[ENC=%{&fileencoding}]\[ROW=%l/%L]\[COLUMN=%c]
 
 "font
-if has('win32')
-	set guifont=MS_Gothic:h10
-	set viminfo+=nC:/tools/vim/_viminfo
-endif
-
 "window sizeは個別で設定する
 
 "grep program
 if has('win32')
-	set grepprg=grep.exe\ -nHIr\ --exclude-dir=.svn
-	let $PATH=expand($PATH) . ';C:\Program Files\GnuWin32\bin'
+    set grepprg=C:/MinGW/msys/1.0/bin/grep.exe\ -nHIr\ --exclude-dir=.svn
+    let $PATH=expand($PATH) . ';C:\Program Files\GnuWin32\bin'
 endif
-
-"
-filetype plugin on
 
 "key map
 nnoremap gr :grep <cword> 
@@ -159,8 +164,8 @@ nnoremap td :tabc<CR>
 nnoremap tr <C-PageUp>
 nnoremap tl <C-PageDown>
 
-"挿入モードのカーソル移動
-inoremap <c-h> <Up>
+"
+inoremap <c-h> <Left>
 inoremap <c-j> <Down>
 inoremap <c-k> <Up>
 inoremap <c-l> <Right>
@@ -176,7 +181,6 @@ inoremap {} {}<Left>
 nnoremap <space>. :tab split ~/.vim/.vimrc<CR>
 nnoremap <space>, :source ~/.vim/.vimrc<CR>
 
-
 "global
 nnoremap <C-g> :Gtags -g 
 nnoremap <C-h> :Gtags -f %<CR>
@@ -185,3 +189,4 @@ nnoremap <C-n> :cn<CR>zz
 nnoremap <C-p> :cp<CR>zz
 
 let g:netrw_localcopycmd = ''
+

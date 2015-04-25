@@ -5,8 +5,8 @@ set runtimepath+=$VIM/vim74/bundle/neobundle.vim/
 endif
 
 " Save fold settings.
-"autocmd BufWritePost * if expand('%') != '' && &buftype !~ 'nofile' | mkview | endif
-"autocmd BufRead * if expand('%') != '' && &buftype !~ 'nofile' | silent loadview | endif
+autocmd BufWritePost * if expand('%') != '' && &buftype !~ 'nofile' | mkview | endif
+autocmd BufRead * if expand('%') != '' && &buftype !~ 'nofile' | silent loadview | endif
 " Don't save options.
 set viewoptions-=options
 

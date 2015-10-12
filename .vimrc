@@ -1,23 +1,16 @@
-if has('vim_starting')
 set nocompatible               " Be iMproved
+filetype plugin indent off
 
-set runtimepath+=$VIM/vim74/bundle/neobundle.vim/
+if has('vim_starting')
+set runtimepath+=~/.vim/bundle/neobundle.vim
 endif
 
-" Save fold settings.
-autocmd BufWritePost * if expand('%') != '' && &buftype !~ 'nofile' | mkview | endif
-autocmd BufRead * if expand('%') != '' && &buftype !~ 'nofile' | silent loadview | endif
-" Don't save options.
-set viewoptions-=options
+call neobundle#begin(expand('~/.vim/bundle'))
 
 "-----------------
 " plugin
 "-----------------
-" Required:
-call neobundle#rc(expand('$VIM/vim74/bundle/'))
-
 " Let NeoBundle manage NeoBundle
-" Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 "-----------------
@@ -72,8 +65,15 @@ NeoBundle 'Shougo/neocomplete.vim'
 NeoBundle 'tpope/vim-surround.git'
 
 NeoBundleCheck
+call neobundle#end()
 
-filetype plugin on
+filetype plugin indent on
+" Save fold settings.
+autocmd BufWritePost * if expand('%') != '' && &buftype !~ 'nofile' | mkview | endif
+autocmd BufRead * if expand('%') != '' && &buftype !~ 'nofile' | silent loadview | endif
+" Don't save options.
+set viewoptions-=options
+
 " 画面表示の設定
 set number         " 行番号を表示する
 set cursorline     " カーソル行の背景色を変える

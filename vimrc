@@ -1,16 +1,25 @@
-set nocompatible               " Be iMproved
-filetype plugin indent off
-
 if has('vim_starting')
-set runtimepath+=~/.vim/bundle/neobundle.vim
+set nocompatible               " Be iMproved
 endif
 
-call neobundle#begin(expand('~/.vim/bundle'))
+"set runtimepath+=$VIM/vim74/bundle/neobundle.vim/
 
+" Save fold settings.
+autocmd BufWritePost * if expand('%') != '' && &buftype !~ 'nofile' | mkview | endif
+autocmd BufRead * if expand('%') != '' && &buftype !~ 'nofile' | silent loadview | endif
+" Don't save options.
+set viewoptions-=options
+
+" NeoBundle は使わない。vim80デフォルトのパッケージマネージャーに移行する
+if 0
 "-----------------
 " plugin
 "-----------------
+" Required:
+call neobundle#rc(expand('$VIM/vim74/bundle/'))
+
 " Let NeoBundle manage NeoBundle
+" Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 "-----------------
@@ -41,18 +50,18 @@ NeoBundle 'Shougo/vimproc.vim'
 let g:unite_enable_startinsert=1
 let g:unite_source_history_yank_enable =1
 let g:unite_source_file_mru_limit = 50
-nnoremap <silent> <space>uy :<C-u>Unite history/yank<CR>
-nnoremap <silent> <space>ub :<C-u>Unite buffer<CR>
-nnoremap <silent> <space>uf :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
-nnoremap <silent> <space>ur :<C-u>Unite -buffer-name=register register<CR>
-nnoremap <silent> <space>uu :<C-u>Unite file_mru buffer<CR>
+cnoremap uh -vertical -winwidth=70 
+nmap <silent> <space>uy :Unite uh history/yank<CR>
+nmap <silent> <space>ub :Unite uh buffer<CR>
+nmap <silent> <space>uf :UniteWithBufferDir uh -buffer-name=files file<CR>
+nmap <silent> <space>ur :Unite uh -buffer-name=register register<CR>
+nmap <silent> <space>uu :Unite uh file_mru buffer<CR>
 
 "-----------------
 " restart
 "-----------------
 NeoBundle 'tyru/restart.vim'
-let g:restart_sessionoptions
-    \ = 'blank,buffers,curdir,folds,help,localoptions,tabpages'
+let g:restart_sessionoptions = 'blank,buffers,curdir,folds,help,localoptions,tabpages'
 
 "-----------------
 " neocomplete
@@ -65,15 +74,9 @@ NeoBundle 'Shougo/neocomplete.vim'
 NeoBundle 'tpope/vim-surround.git'
 
 NeoBundleCheck
-call neobundle#end()
+endif
 
-filetype plugin indent on
-" Save fold settings.
-autocmd BufWritePost * if expand('%') != '' && &buftype !~ 'nofile' | mkview | endif
-autocmd BufRead * if expand('%') != '' && &buftype !~ 'nofile' | silent loadview | endif
-" Don't save options.
-set viewoptions-=options
-
+filetype plugin on
 " 画面表示の設定
 set number         " 行番号を表示する
 set cursorline     " カーソル行の背景色を変える
@@ -95,9 +98,11 @@ set sidescroll=1               " 左右スクロールは一文字づつ行う
 " ファイル処理関連の設定
 set confirm    " 保存されていないファイルがあるときは終了前に保存確認
 set hidden     " 保存されていないファイルがあるときでも別のファイルを開くことが出来る
-set autoread   "外部でファイルに変更がされた場合は読みなおす
-set nobackup   " ファイル保存時にバックアップファイルを作らない
-set noswapfile " ファイル編集中にスワップファイルを作らない
+set autoread   " 外部でファイルに変更がされた場合は読みなおす
+set nobackup   " ファイル保存時にバックアップファイルを作らない(*~)
+set noswapfile " ファイル編集中にスワップファイルを作らない(*.swp)
+set noundofile " undoファイルを作らない(*.un~)
+set viminfo=   " viminfoファイルを作らない
 
 " 検索/置換の設定
 set hlsearch   " 検索文字列をハイライトする
@@ -129,7 +134,7 @@ set iminsert=2
 " コマンドラインの設定
 " コマンドラインモードでTABキーによるファイル名補完を有効にする
 set wildmenu wildmode=list:longest,full
-" コマンドラインの履歴を10000件保存する
+" コマンドラインの履歴を100件保存する
 set history=100
 
 " ビープの設定
@@ -142,40 +147,43 @@ set laststatus=2
 set statusline&
 set statusline+=%F%m%r%h%w\%=[TYPE=%Y]\[FORMAT=%{&fileformat}]\[ENC=%{&fileencoding}]\[ROW=%l/%L]\[COLUMN=%c]
 
-"font
-"window sizeは個別で設定する
-
-"grep program
-if has('win32')
-    set grepprg=C:/MinGW/msys/1.0/bin/grep.exe\ -nHIr\ --exclude-dir=.svn
-    let $PATH=expand($PATH) . ';C:\Program Files\GnuWin32\bin'
-endif
-
 "key map
-nnoremap gr :grep <cword> 
+nnoremap gr :grep ./* -e <cword>
 "tab add
 nnoremap ta :tab split<CR>
-nnoremap tn :tab new<CR>
+nmap tn :tab new<CR><space>
 "tab switch
 nnoremap ts gt
 "tab delete
 nnoremap td :tabc<CR>
-"
+"tab right/left
 nnoremap tr <C-PageUp>
 nnoremap tl <C-PageDown>
 
-"
+"1行が折り返して表示されているとき、表示上の行移動をjkキーの動作にする
+nnoremap j gj
+nnoremap k gk
+nnoremap gj j
+nnoremap gk k
+
+"インサートモードでもhjklキーで移動する
 inoremap <c-h> <Left>
 inoremap <c-j> <Down>
 inoremap <c-k> <Up>
 inoremap <c-l> <Right>
 
-"
+"かっこを入力したらその中にカーソルを移動する
 inoremap () ()<Left>
 inoremap [] []<Left>
 inoremap "" ""<Left>
 inoremap <> <><Left>
 inoremap {} {}<Left>
+
+"挿入モードからノーマルモードへ行くキーマッピング(<C-[>が使いにくいので)
+inoremap <C-f> <ESC>
+
+"挿入モードでBackSpaceの代わりに使う
+inoremap <C-b> <BS>
 
 "open .vimrc
 nnoremap <space>. :tab split ~/.vim/.vimrc<CR>
@@ -187,6 +195,8 @@ nnoremap <C-h> :Gtags -f %<CR>
 nnoremap <C-j> :GtagsCursor<CR>
 nnoremap <C-n> :cn<CR>zz
 nnoremap <C-p> :cp<CR>zz
+nnoremap <space>n :colder<CR>
+nnoremap <space>p :cnewer<CR>
 
 let g:netrw_localcopycmd = ''
 
